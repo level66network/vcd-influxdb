@@ -1,0 +1,6 @@
+composer.phar
+/vendor/
+
+config.php
+*.swp
+*.tmp

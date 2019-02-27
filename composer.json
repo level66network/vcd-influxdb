@@ -1,0 +1,6 @@
+{
+    "require": {
+        "influxdb/influxdb-php": "^1.14",
+        "tcdent/php-restclient": "^0.1.7"
+    }
+}
