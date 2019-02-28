@@ -138,6 +138,9 @@ do{
 		InfluxDB\Database::PRECISION_SECONDS
 	);
 
+        /* Free memory */
+        unset($orgs, $org, $link, $ovdc, $sp, $influxdb_org, $influxdb_ovdc);
+
         /* Take a nap if running in daemon mode */
         if($daemon){
 		if(!isset($cfg['APP']['INTERVALL'])){
