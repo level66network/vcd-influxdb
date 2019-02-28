@@ -1,5 +1,8 @@
 <?php
 $cfg = Array(
+	'APP' => Array(
+		'INTERVALL' => 300,
+	),
 	'VCD' => Array(
 		'URL' => 'https://vcd.level66.network/api',
 		'USER' => '',

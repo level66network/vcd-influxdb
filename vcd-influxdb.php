@@ -15,11 +15,10 @@ if(file_exists(__DIR__ . '/config.php')){
 }
 
 /* Check if daemon flag is set */
+$daemon = false;
 foreach($argv as $arg){
 	if($arg == '-d' or $arg == '--daemon'){
 		$daemon = true;
-	}else{
-		$daemon = false;
 	}
 }
 
@@ -61,15 +60,21 @@ do{
 	/* Iterating through Orgs */
 	foreach($orgs->OrgRecord as $org){
 		/* org measurements */
-		$influxdb_org[] =  new InfluxDB\Point('org', null, ['name' => $org['name'], 'displayName' => $org['displayName'], 'isEnabled' => true, 'isReadOnly' => true, 'canPublishCatalogs' => true], ['numberOfCatalogs' => $org['numberOfCatalogs'], 'numberOfDisks' => $org['numberOfDisks'], 'numberOfGroups' => $org['numberOfGroups'], 'numberOfVApps' => $org['numberOfVApps'], 'numberOfRunningVMs' => $org['numberOfRunningVMs'], 'numberOfVdcs' => $org['numberOfVdcs'], 'storedVMQuota' => $org['storedVMQuota']]);
+		$influxdb_org[] =  new InfluxDB\Point(
+			'org',
+			null,
+			['name' => $org['name'], 'displayName' => $org['displayName'], 'isEnabled' => true, 'isReadOnly' => true, 'canPublishCatalogs' => true],
+			['numberOfCatalogs' => $org['numberOfCatalogs'], 'numberOfDisks' => $org['numberOfDisks'], 'numberOfGroups' => $org['numberOfGroups'], 'numberOfVApps' => $org['numberOfVApps'], 'numberOfRunningVMs' => $org['numberOfRunningVMs'], 'numberOfVdcs' => $org['numberOfVdcs'], 'storedVMQuota' => $org['storedVMQuota']]
+		);
 
 		$org = $api->get(str_replace($cfg['VCD']['URL'], '', $org['href']));
 		$org = new SimpleXMLElement($org->response);
 
 		$influxdb_ovdc = Array();
 
-		/* Iterate through Links oVDCs */
+		/* Iterate through subobjects */
 		foreach($org->Link as $link){
+			/* Find VDCs */
 			if($link['type'] == 'application/vnd.vmware.vcloud.vdc+xml'){
 				$ovdc = $api->get(str_replace($cfg['VCD']['URL'], '', $link['href']));
 				$ovdc = new SimpleXMLElement($ovdc->response);
@@ -108,7 +113,10 @@ do{
 
         /* Take a nap if running in daemon mode */
         if($daemon){
- 		sleep(300);
+		if(!isset($cfg['APP']['INTERVALL'])){
+			$cfg['APP']['INTERVALL'] = 300;
+		}
+ 		sleep($cfg['APP']['INTERVALL']);
         }
 
 /* Ending of daemon loop */
