@@ -50,8 +50,17 @@ if($cfg['INFLUXDB']['USER'] and $cfg['INFLUXDB']['PASSWORD']){
 $db = $influxdb->selectDB($cfg['INFLUXDB']['DB']);
 
 do{
+	/* Predefine stas per run */
+	$stats = Array(
+		'start' => time(),
+		'end' => null,
+		'runtime' => null,
+		'requests' => 0,
+	);
+
 	/* Fetching ORGs */
 	$orgs = $api->get('/api/admin/orgs/query');
+	$stats['requests']++;
 	$orgs = new SimpleXMLElement($orgs->response);
 
 
@@ -68,6 +77,7 @@ do{
 		);
 
 		$org = $api->get(str_replace($cfg['VCD']['URL'], '', $org['href']));
+		$stats['requests']++;
 		$org = new SimpleXMLElement($org->response);
 
 		$influxdb_ovdc = Array();
@@ -77,6 +87,7 @@ do{
 			/* Find VDCs */
 			if($link['type'] == 'application/vnd.vmware.vcloud.vdc+xml'){
 				$ovdc = $api->get(str_replace($cfg['VCD']['URL'], '', $link['href']));
+				$stats['requests']++;
 				$ovdc = new SimpleXMLElement($ovdc->response);
 
 				/* oVDC measurements */
@@ -90,6 +101,7 @@ do{
 				/* Iterate through Storage Profiles */
 				foreach($ovdc->VdcStorageProfiles->VdcStorageProfile as $sp){
 					$sp = $api->get(str_replace($cfg['VCD']['URL'], '', $sp['href']));
+					$stats['requests']++;
 					$sp =  new SimpleXMLElement($sp->response);
 
 					/* Storage Profile measurements */
@@ -110,13 +122,28 @@ do{
 	/* Push org data to InfluxDB */
 	$db->writePoints($influxdb_org, InfluxDB\Database::PRECISION_SECONDS);
 
+	/* Calculate Runtime */
+	$stats['end'] = time();
+	$stats['runtime'] = $stats['end'] - $stats['start'];
+
+	$db->writePoints(
+		Array(
+			new InfluxDB\Point(
+				'poller',
+				null,
+				[],
+				['runtime' => $stats['runtime'], 'requests' => $stats['requests']]
+			)
+		),
+		InfluxDB\Database::PRECISION_SECONDS
+	);
 
         /* Take a nap if running in daemon mode */
         if($daemon){
 		if(!isset($cfg['APP']['INTERVALL'])){
 			$cfg['APP']['INTERVALL'] = 300;
 		}
- 		sleep($cfg['APP']['INTERVALL']);
+ 		sleep($cfg['APP']['INTERVALL'] - $stats['runtime']);
         }
 
 /* Ending of daemon loop */
