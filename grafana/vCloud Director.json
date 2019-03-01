@@ -11,12 +11,6 @@
   ],
   "__requires": [
     {
-      "type": "panel",
-      "id": "dashlist",
-      "name": "Dashboard list",
-      "version": "5.0.0"
-    },
-    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -1559,26 +1553,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "folderId": 44,
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 6
-      },
-      "headings": true,
-      "id": 22,
-      "limit": 10,
-      "links": [],
-      "query": "",
-      "recent": false,
-      "search": true,
-      "starred": false,
-      "tags": [],
-      "title": "Views",
-      "type": "dashlist"
     }
   ],
   "refresh": "10s",
@@ -1620,5 +1594,5 @@
   "timezone": "",
   "title": "vCloud Director",
   "uid": "DtxzL_9iz",
-  "version": 47
+  "version": 49
 }
