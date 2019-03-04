@@ -76,6 +76,7 @@ do{
 			['numberOfCatalogs' => $org['numberOfCatalogs'], 'numberOfDisks' => $org['numberOfDisks'], 'numberOfGroups' => $org['numberOfGroups'], 'numberOfVApps' => $org['numberOfVApps'], 'numberOfRunningVMs' => $org['numberOfRunningVMs'], 'numberOfVdcs' => $org['numberOfVdcs'], 'storedVMQuota' => $org['storedVMQuota']]
 		);
 
+		/* Fetch detailed org information */
 		$org = $api->get(str_replace($cfg['VCD']['URL'], '', $org['href']));
 		$stats['requests']++;
 		$org = new SimpleXMLElement($org->response);
@@ -86,6 +87,7 @@ do{
 		foreach($org->Link as $link){
 			/* Find VDCs */
 			if($link['type'] == 'application/vnd.vmware.vcloud.vdc+xml'){
+				/* Fetch detailed infos to VDCs */
 				$ovdc = $api->get(str_replace($cfg['VCD']['URL'], '', $link['href']));
 				$stats['requests']++;
 				$ovdc = new SimpleXMLElement($ovdc->response);
@@ -126,6 +128,7 @@ do{
 	$stats['end'] = time();
 	$stats['runtime'] = $stats['end'] - $stats['start'];
 
+	/* Write stats to DB */
 	$db->writePoints(
 		Array(
 			new InfluxDB\Point(
