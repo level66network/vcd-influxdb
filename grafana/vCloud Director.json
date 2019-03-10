@@ -1811,14 +1811,16 @@
       },
       "yaxes": [
         {
+          "decimals": 0,
           "format": "short",
-          "label": null,
+          "label": "",
           "logBase": 1,
           "max": null,
           "min": null,
           "show": true
         },
         {
+          "decimals": 0,
           "format": "s",
           "label": "",
           "logBase": 1,
@@ -1969,7 +1971,7 @@
       }
     }
   ],
-  "refresh": "10s",
+  "refresh": "1m",
   "schemaVersion": 16,
   "style": "dark",
   "tags": [],
@@ -2008,5 +2010,5 @@
   "timezone": "",
   "title": "vCloud Director",
   "uid": "DtxzL_9iz",
-  "version": 94
+  "version": 102
 }
