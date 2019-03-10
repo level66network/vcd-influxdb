@@ -13,6 +13,9 @@ composer install
 ### Configuration
 Duplicate 'config.php.tpl' as 'config.php' and edit the setting according your needs.
 
+### Grafana
+Import Dashboards into Grafana and update all vCPU calculations with the speed processor (in our case 2.4 GHz).
+
 ## Run
 
 ### Daemon Mode
