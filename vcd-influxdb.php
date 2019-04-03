@@ -59,7 +59,7 @@ do{
 	);
 
 	/* Fetching ORGs */
-	$orgs = $api->get('/api/admin/orgs/query');
+	$orgs = $api->get('/api/admin/orgs/query?pageSize=99999');
 	$stats['requests']++;
 	$orgs = new SimpleXMLElement($orgs->response);
 
